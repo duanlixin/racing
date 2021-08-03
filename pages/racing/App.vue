@@ -1,39 +1,46 @@
 <template>
-<div id="app">
-asdfasdfasdfasdf
-</div>
-
+  <div id="start" />
 </template>
 
 <script>
+const { fetchInfo, redirectToLoginV2 } = window.TencentSports.mlogin;
 
 export default {
   name: "App",
   data() {
     return {
-      currentIndex: 0,
-      list: [
-        { name: 'home', text: '返回首页' },
-        { name: 'random', text: '随机数组' },
-        { name: 'swiper', text: '轮播图' },
-        { name: 'animation', text: '动画' },
-      ],
     }
   },
-  computed: {
-
+  mounted() {
+    this.login();
   },
+
   methods: {
-    getCurrentStyle(index) {
-      console.log(index, this.currentIndex)
-      return {
-        clicked: index === this.currentIndex,
-      }
+    login() {
+      fetchInfo(({ isLogin, isStrong }) => {
+        if (!(isLogin && isStrong)) { // 未登录
+          redirectToLoginV2({});
+          return;
+        }
+        // this.getData();
+      });
     },
-    go(index, name) {
-      this.currentIndex = index;
-      this.$router.push({ name });
-    },
+    getData() {
+      // https://axios-http.com/docs/intro 文档地址
+      this.axios(
+        {
+          method: 'get',
+          url: 'https://matchweb.sports.qq.com/active/f1Entrance',
+          params: {
+            isRetry: 0,
+            teamName: '梅赛德斯'
+          },
+          withCredentials: true
+        }
+      ).then((response) => {
+        console.log(response.data)
+      })
+    }
   },
 };
 </script>
